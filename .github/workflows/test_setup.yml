@@ -1,0 +1,51 @@
+name: Verificar Configuración Local de Supabase
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/test_setup.yml'
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/test_setup.yml'
+
+jobs:
+  test-local-db-setup:
+    name: Test de Migraciones y Seed Locales
+    runs-on: ubuntu-latest
+
+    env:
+      ADMIN_EMAIL: test-admin@example.com
+      ADMIN_PASSWORD: password123
+      USER_EMAIL: test-user@example.com
+      USER_PASSWORD: password123
+
+    steps:
+      - name: 1. Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: 2. Instalar la CLI de Supabase
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: 3. Levantar el entorno local de Supabase
+        run: supabase start
+
+      - name: 4. Aplicar migraciones de ESQUEMA
+        run: supabase db reset
+
+      - name: 5. Ejecutar script de SEED (seed.sql)
+        run: |
+          psql $SUPABASE_DB_URL \
+            -v ADMIN_EMAIL="'$ADMIN_EMAIL'" \
+            -v ADMIN_PASSWORD="'$ADMIN_PASSWORD'" \
+            -v USER_EMAIL="'$USER_EMAIL'" \
+            -v USER_PASSWORD="'$USER_PASSWORD'" \
+            -f supabase/seed.sql
+
+      - name: 6. Detener el entorno local de Supabase
+        if: always()
+        run: supabase stop
