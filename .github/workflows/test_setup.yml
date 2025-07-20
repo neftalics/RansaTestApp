@@ -21,6 +21,7 @@ jobs:
       ADMIN_PASSWORD: password123
       USER_EMAIL: test-user@example.com
       USER_PASSWORD: password123
+      SUPABASE_NON_INTERACTIVE: true
 
     steps:
       - name: 1. Clonar el repositorio
@@ -34,17 +35,12 @@ jobs:
       - name: 3. Levantar el entorno local de Supabase
         run: supabase start
 
-      - name: 4. Aplicar migraciones 
-        run: |
-          mv supabase/seed.sql supabase/seed.sql.bak
-          supabase db reset
-          mv supabase/seed.sql.bak supabase/seed.sql
+      - name: 4. Aplicar migraciones
+        run: supabase db reset --no-seed
 
       - name: 5. Preparar y ejecutar script de SEED con variables
         run: |
-          envsubst < supabase/seed.sql > supabase/seed_resolved.sql
-
-          psql $SUPABASE_DB_URL -f supabase/seed_resolved.sql
+          envsubst < supabase/seed.sql | supabase db execute
 
       - name: 6. Detener el entorno local de Supabase
         if: always()
