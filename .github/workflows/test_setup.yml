@@ -34,17 +34,17 @@ jobs:
       - name: 3. Levantar el entorno local de Supabase
         run: supabase start
 
-      - name: 4. Aplicar migraciones de ESQUEMA
-        run: supabase db reset
-
-      - name: 5. Ejecutar script de SEED (seed.sql)
+      - name: 4. Aplicar migraciones 
         run: |
-          psql $SUPABASE_DB_URL \
-            -v ADMIN_EMAIL="'$ADMIN_EMAIL'" \
-            -v ADMIN_PASSWORD="'$ADMIN_PASSWORD'" \
-            -v USER_EMAIL="'$USER_EMAIL'" \
-            -v USER_PASSWORD="'$USER_PASSWORD'" \
-            -f supabase/seed.sql
+          mv supabase/seed.sql supabase/seed.sql.bak
+          supabase db reset
+          mv supabase/seed.sql.bak supabase/seed.sql
+
+      - name: 5. Preparar y ejecutar script de SEED con variables
+        run: |
+          envsubst < supabase/seed.sql > supabase/seed_resolved.sql
+
+          psql $SUPABASE_DB_URL -f supabase/seed_resolved.sql
 
       - name: 6. Detener el entorno local de Supabase
         if: always()
