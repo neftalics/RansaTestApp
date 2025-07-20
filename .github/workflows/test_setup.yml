@@ -17,11 +17,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ADMIN_EMAIL: test-admin@example.com
-      ADMIN_PASSWORD: password123
-      USER_EMAIL: test-user@example.com
-      USER_PASSWORD: password123
+      ADMIN_EMAIL: 'test-admin@example.com'
+      ADMIN_PASSWORD: 'password123'
+      USER_EMAIL: 'test-user@example.com'
+      USER_PASSWORD: 'password123'
       SUPABASE_NON_INTERACTIVE: true
+      DATABASE_URL: 'postgresql://postgres:postgres@localhost:54322/postgres'
 
     steps:
       - name: 1. Clonar el repositorio
@@ -35,13 +36,20 @@ jobs:
       - name: 3. Levantar el entorno local de Supabase
         run: supabase start
 
-      - name: 4. Aplicar migraciones
+      - name: 4. Aplicar migraciones (sin ejecutar el seed)
         run: supabase db reset --no-seed
 
-      - name: 5. Preparar y ejecutar script de SEED con variables
+      - name: 5. Esperar a que PostgreSQL esté listo para aceptar conexiones
         run: |
-          envsubst < supabase/seed.sql | supabase db execute
+          for i in {1..10}; do
+            pg_isready -d "$DATABASE_URL" -q && break
+            echo "Esperando a la base de datos... ($i/10)"
+            sleep 1
+          done
 
-      - name: 6. Detener el entorno local de Supabase
+      - name: 6. Ejecutar SEED con variables de entorno
+        run: envsubst < supabase/seed.sql | psql "$DATABASE_URL"
+
+      - name: 7. Detener el entorno local de Supabase
         if: always()
         run: supabase stop
