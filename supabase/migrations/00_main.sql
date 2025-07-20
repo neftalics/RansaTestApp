@@ -11,13 +11,13 @@
 \echo '... PASO 1/4 COMPLETADO.'
 \echo ''
 
-\echo 'PASO 2/4: Poblando la base de datos con datos iniciales (seed.sql)...'
-\i /docker-entrypoint-initdb.d/scripts/seed.sql
+\echo 'PASO 2/4: Creando funciones y triggers de auditoría (funciones_y_triggers.sql)...'
+\i /docker-entrypoint-initdb.d/scripts/funciones_y_triggers.sql
 \echo '... PASO 2/4 COMPLETADO.'
 \echo ''
 
-\echo 'PASO 3/4: Creando funciones y triggers de auditoría (funciones_y_triggers.sql)...'
-\i /docker-entrypoint-initdb.d/scripts/funciones_y_triggers.sql
+\echo 'PASO 3/4: Poblando la base de datos con datos iniciales (seed.sql)...'
+\i /docker-entrypoint-initdb.d/scripts/seed.sql
 \echo '... PASO 3/4 COMPLETADO.'
 \echo ''
 
