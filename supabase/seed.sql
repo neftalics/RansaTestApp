@@ -23,8 +23,8 @@ SELECT
     data.raw_user_meta_data::jsonb
 FROM (
     VALUES
-        (:'ADMIN_EMAIL', :'ADMIN_PASSWORD', '{"role": "admin", "email_verified": true}'),
-        (:'USER_EMAIL',  :'USER_PASSWORD',  '{"role": "user", "email_verified": true}')
+        (:ADMIN_EMAIL, :ADMIN_PASSWORD, '{"role": "admin", "email_verified": true}'),
+        (:USER_EMAIL,  :USER_PASSWORD,  '{"role": "user", "email_verified": true}')
 ) AS data(email, password, raw_user_meta_data)
 WHERE NOT EXISTS (
     SELECT 1 FROM auth.users WHERE email = data.email
@@ -129,7 +129,7 @@ FROM
     auth.users u,
     public.perfil p
 WHERE
-    u.email = :'ADMIN_EMAIL'
+    u.email = :ADMIN_EMAIL
     AND p.descripcion = 'Administrador'
     AND p.idaplicacion = (
         SELECT idaplicacion FROM public.aplicacion WHERE descripcion = 'Sistema de Ventas'
