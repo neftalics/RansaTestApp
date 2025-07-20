@@ -27,4 +27,4 @@
 \echo ''
 
 \echo '-------------------------------------------------'
-\echo '[FIN] ¡Inicialización de la base de datos completada con éxito!'
+\echo '[FIN]
