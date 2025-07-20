@@ -15,7 +15,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Función para borrado lógico
 CREATE OR REPLACE FUNCTION public.fn_borrar_logico()
@@ -58,7 +58,7 @@ BEGIN
 
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Verificar si es admin
 CREATE OR REPLACE FUNCTION public.fn_es_admin()
@@ -69,7 +69,7 @@ BEGIN
         false
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- RPC: Verificar si el usuario tiene acceso a la app
 CREATE OR REPLACE FUNCTION public.fn_acceso_app(id_app uuid)
@@ -85,7 +85,7 @@ BEGIN
         WHERE up.user_id = auth.uid() AND p.idaplicacion = id_app
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- RPC: Obtener menú del usuario según app
 CREATE OR REPLACE FUNCTION public.fn_menu_usuario(app_id uuid)
@@ -104,7 +104,7 @@ BEGIN
       AND m.idaplicacion = app_id
       AND m.estado = true AND pm.estado = true;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Permisos de ejecución RPCs
 GRANT EXECUTE ON FUNCTION public.fn_acceso_app(uuid) TO authenticated, service_role;
