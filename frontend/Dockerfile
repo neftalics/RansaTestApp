@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json angular.json tsconfig.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build -- --output-path=dist
 
