@@ -1,41 +1,48 @@
-name: Verificar Docker Compose Funciona
+name: Validar Docker Compose
 
 on:
-  pull_request:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
-  docker-compose-test:
-    name: Validar docker-compose up --build
+  test-docker-compose:
     runs-on: ubuntu-latest
 
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
     steps:
-      - name: Clonar repositorio
+      - name: 1. Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar variables de entorno requeridas
+      - name: 2. Crear archivo .env con secretos
         run: |
-          echo "SUPABASE_URL=http://localhost:54321" >> .env
-          echo "SUPABASE_KEY=clave-de-prueba" >> .env
-          echo "SUPABASE_ANON_KEY=anon-key-de-prueba" >> .env
-          echo "SUPABASE_SERVICE_KEY=service-key-de-prueba" >> .env
+          echo "SUPABASE_URL=${SUPABASE_URL}" >> .env
+          echo "SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}" >> .env
+          echo "DATABASE_URL=${DATABASE_URL}" >> .env
+          echo "VITE_API_URL=${VITE_API_URL}" >> .env
 
-      - name: Instalar Docker Compose v2
+      - name: 3. Instalar Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.26.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          sudo apt-get update
+          sudo apt-get install docker-compose -y
 
-      - name: Ejecutar docker-compose up --build (verificación)
+      - name: 4. Levantar servicios
         run: |
-          docker-compose up --build -d
-          sleep 15  # da tiempo a los servicios para arrancar
+          docker-compose --env-file .env up --build -d
+          sleep 30  # espera para que todos los servicios arranquen
           docker-compose ps
 
-      - name: Verificar estado de los contenedores
+      - name: 5. Verificar que todos los contenedores estén UP
         run: |
-          docker-compose ps | grep "Exit" && exit 1 || echo "Todos los servicios están funcionando."
+          STATUS=$(docker inspect --format='{{.State.Status}}' $(docker ps -aq))
+          echo "$STATUS" | grep -qv "exited" || (echo "Un servicio falló al levantar" && exit 1)
 
-      - name: Apagar servicios
+      - name: 6. Detener y limpiar contenedores
         if: always()
-        run: docker-compose down
+        run: docker-compose down -v
