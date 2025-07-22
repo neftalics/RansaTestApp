@@ -1,0 +1,120 @@
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.button-spinner {
+  margin-right: 8px;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.health-card {
+  height: fit-content;
+}
+
+.health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.service-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.status-icon.healthy {
+  color: #4caf50;
+}
+
+.status-icon.unhealthy {
+  color: #f44336;
+}
+
+.check-details {
+  margin-top: 16px;
+}
+
+.check-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.check-item:last-child {
+  border-bottom: none;
+}
+
+.check-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.check-icon.ok {
+  color: #4caf50;
+}
+
+.check-icon.error {
+  color: #f44336;
+}
+
+.status-text.ok {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.status-text.error {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.check-message {
+  margin: 4px 0 0 26px;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.last-update {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}

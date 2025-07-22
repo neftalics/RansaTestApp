@@ -1,0 +1,63 @@
+<div class="aplicaciones-container">
+  <div class="header">
+    <h1>Aplicaciones</h1>
+    <button mat-raised-button color="primary" (click)="openCreateModal()">Nueva aplicación</button>
+  </div>
+
+  <div *ngIf="isLoading()" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Cargando aplicaciones...</p>
+  </div>
+
+  <div *ngIf="!isLoading() && aplicaciones().length === 0" class="empty-state">
+    <mat-icon>info</mat-icon>
+    <p>No tienes aplicaciones registradas.</p>
+  </div>
+
+  <div class="apps-list" *ngIf="!isLoading() && aplicaciones().length > 0">
+    <mat-card class="app-card"
+      *ngFor="let app of aplicaciones(); trackBy: trackById">
+      <mat-card-header>
+        <mat-card-title>{{ app.nombre }}</mat-card-title>
+        <mat-chip [color]="app.activo ? 'primary' : 'warn'">
+          {{ app.activo ? 'Activo' : 'Inactivo' }}
+        </mat-chip>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ app.descripcion }}</p>
+      </mat-card-content>
+      <mat-card-actions *ngIf="authService.isAdmin">
+        <button mat-button color="accent" (click)="openEditModal(app)">Editar</button>
+        <button mat-button color="warn" (click)="deleteAplicacion(app)">Eliminar</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- MODAL -->
+  <app-modal
+    [isOpen]="showModal()"
+    [title]="modalTitle()"
+    [showFooter]="false"
+    (closeModal)="closeModal()"
+  >
+    <form (ngSubmit)="onSubmit()" #appForm="ngForm">
+      <mat-form-field class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput name="nombre" [(ngModel)]="formData.nombre" required />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput name="descripcion" [(ngModel)]="formData.descripcion" required></textarea>
+      </mat-form-field>
+      <mat-checkbox name="activo" [(ngModel)]="formData.activo">
+        Activo
+      </mat-checkbox>
+      <div class="modal-footer" slot="footer">
+        <button mat-stroked-button type="button" (click)="closeModal()" [disabled]="isSubmitting()">Cancelar</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </app-modal>
+</div>

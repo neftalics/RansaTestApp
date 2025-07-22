@@ -1,0 +1,123 @@
+<!-- src/pages/dashboard/dashboard.component.html -->
+
+<div class="page-container">
+  <div class="section-header">
+    <h1>Dashboard</h1>
+    <p>Bienvenido, {{ user()?.name || user()?.email }}</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Cargando información...</p>
+    </div>
+  } @else {
+
+     <mat-grid-list cols="4" rowHeight="120px" gutterSize="16px" class="stats-grid">
+      <mat-grid-tile>
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <mat-icon class="stat-icon primary">apps</mat-icon>
+              <div class="stat-info">
+                <h3>{{ aplicaciones().length }}</h3>
+                <p>Aplicaciones</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <mat-icon class="stat-icon blue">menu</mat-icon>
+              <div class="stat-info">
+                <h3>{{ menus().length }}</h3>
+                <p>Menús Disponibles</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <mat-icon class="stat-icon green">person</mat-icon>
+              <div class="stat-info">
+                <h3>{{ user()?.role === 'admin' ? 'Admin' : 'Usuario' }}</h3>
+                <p>Rol</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+      <mat-grid-tile>
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <mat-icon class="stat-icon purple">check_circle</mat-icon>
+              <div class="stat-info">
+                <h3>Activo</h3>
+                <p>Estado</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <div class="main-content">
+      <div class="content-row">
+
+        <!-- Aplicaciones -->
+        <mat-card class="content-card">
+          <mat-card-header>
+            <mat-card-title>Mis Aplicaciones</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (aplicacionesList().length === 0) {
+              <p class="empty-message">No tienes aplicaciones asignadas</p>
+            } @else {
+              <div class="app-list">
+                <div *ngFor="let app of aplicacionesList(); trackBy: trackByApp" class="app-item">
+                  <div class="app-info">
+                    <h4>{{ app.nombre }}</h4>
+                    <p>{{ app.descripcion }}</p>
+                  </div>
+                  <mat-chip [color]="app.activo ? 'primary' : 'warn'">
+                    {{ app.activo ? 'Activo' : 'Inactivo' }}
+                  </mat-chip>
+                </div>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Menús -->
+        <mat-card class="content-card">
+          <mat-card-header>
+            <mat-card-title>Accesos Rápidos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (menusList().length === 0) {
+              <p class="empty-message">No hay menús disponibles</p>
+            } @else {
+              <div class="menu-grid">
+                <div *ngFor="let menu of menusList(); trackBy: trackByMenu" class="menu-item">
+                  <mat-icon>{{ getMenuIcon(menu.icono) }}</mat-icon>
+                  <span>{{ menu.nombre }}</span>
+                </div>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+  }
+</div>

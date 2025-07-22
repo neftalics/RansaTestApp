@@ -1,0 +1,54 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="sidenav-header">
+      <h3>Navegación</h3>
+    </div>
+
+    <mat-nav-list>
+      <ng-container *ngIf="menuItems?.length; else noMenu">
+        <ng-container *ngFor="let item of menuItems; trackBy: trackById">
+          <a mat-list-item
+             [routerLink]="item.ruta"
+             routerLinkActive="active">
+            <mat-icon matListItemIcon>{{ getIcon(item.icono) }}</mat-icon>
+            <span matListItemTitle>{{ item.nombre }}</span>
+          </a>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #noMenu>
+        <a mat-list-item disabled>
+          <mat-icon matListItemIcon>info</mat-icon>
+          <span matListItemTitle>Sin menús</span>
+        </a>
+      </ng-template>
+
+      <mat-divider></mat-divider>
+
+      <ng-container *ngIf="isAdmin">
+        <div class="admin-section">
+          <h4 class="section-title">Administración</h4>
+
+          <a mat-list-item routerLink="/admin/aplicaciones" routerLinkActive="active">
+            <mat-icon matListItemIcon>apps</mat-icon>
+            <span matListItemTitle>Aplicaciones</span>
+          </a>
+
+          <a mat-list-item routerLink="/admin/perfiles" routerLinkActive="active">
+            <mat-icon matListItemIcon>security</mat-icon>
+            <span matListItemTitle>Perfiles</span>
+          </a>
+
+          <a mat-list-item routerLink="/admin/health" routerLinkActive="active">
+            <mat-icon matListItemIcon>health_and_safety</mat-icon>
+            <span matListItemTitle>Estado del Sistema</span>
+          </a>
+        </div>
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

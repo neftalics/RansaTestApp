@@ -1,0 +1,16 @@
+/* Tus estilos originales sin cambios */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #666;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

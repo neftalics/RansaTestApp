@@ -1,0 +1,80 @@
+<div class="page-container">
+  <div class="section-header">
+    <div>
+      <h1>Estado del Sistema</h1>
+      <p>Monitoreo de salud de los servicios</p>
+    </div>
+
+    <button mat-raised-button color="primary"
+            (click)="refreshAll()"
+            [disabled]="isRefreshing()">
+      @if (isRefreshing()) {
+        <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+      } @else {
+        <mat-icon>refresh</mat-icon>
+      }
+      Actualizar
+    </button>
+  </div>
+
+  <div class="health-grid">
+    @for (check of healthChecks(); track check.service) {
+      <mat-card class="health-card">
+        <mat-card-header>
+          <div class="health-header">
+            <div class="service-info">
+              <mat-icon [class]="check.status === 'healthy' ? 'status-icon healthy' : 'status-icon unhealthy'">
+                {{ check.status === 'healthy' ? 'check_circle' : 'error' }}
+              </mat-icon>
+              <div>
+                <mat-card-title>{{ check.service }}</mat-card-title>
+                <mat-chip [color]="check.status === 'healthy' ? 'primary' : 'warn'">
+                  {{ check.status === 'healthy' ? 'Saludable' : 'Con problemas' }}
+                </mat-chip>
+              </div>
+            </div>
+
+            @if (check.isLoading) {
+              <mat-spinner diameter="24"></mat-spinner>
+            }
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="check-details">
+            @for (detail of getCheckDetails(check.checks); track detail.key) {
+              <div class="check-item">
+                <div class="check-name">
+                  <mat-icon [class]="detail.value.status === 'ok' ? 'check-icon ok' : 'check-icon error'">
+                    {{ detail.value.status === 'ok' ? 'check' : 'close' }}
+                  </mat-icon>
+                  <span>{{ detail.key }}</span>
+                </div>
+                <span [class]="detail.value.status === 'ok' ? 'status-text ok' : 'status-text error'">
+                  {{ detail.value.status === 'ok' ? 'OK' : 'Error' }}
+                </span>
+              </div>
+              @if (detail.value.message) {
+                <p class="check-message">{{ detail.value.message }}</p>
+              }
+            }
+          </div>
+
+          @if (getLastUpdate(check.checks)) {
+            <div class="last-update">
+              <small>Última actualización: {{ formatDateSafe(getLastUpdate(check.checks)) }}</small>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  @if (healthChecks().length === 0 && !isRefreshing()) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">health_and_safety</mat-icon>
+      <h3>No hay datos de salud</h3>
+      <p>Haz clic en "Actualizar" para cargar el estado del sistema.</p>
+    </div>
+  }
+</div>
