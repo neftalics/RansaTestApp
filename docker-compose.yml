@@ -5,43 +5,43 @@ services:
     container_name: supabase-db
     image: supabase/postgres
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - supadb-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: access_control
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
 
   supabase-auth:
     image: supabase/gotrue
     ports:
-      - "9999:9999"
+      - "${AUTH_PORT:-9999}:9999"
     environment:
       GOTRUE_DB_DRIVER: postgres
-      DB_DATABASE_URL: postgres://postgres:postgres@supabase-db:5432/access_control
-      JWT_SECRET: super-secret-jwt
-      SITE_URL: http://localhost:4200
-      API_EXTERNAL_URL: http://localhost:9999
+      DB_DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@supabase-db:5432/${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      SITE_URL: ${SITE_URL}
+      API_EXTERNAL_URL: ${AUTH_API_URL}
 
   backend:
     build: ./backend
     depends_on:
       - supabase-db
     environment:
-      DATABASE_URL: postgres://postgres:postgres@supabase-db:5432/access_control
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@supabase-db:5432/${DB_NAME}
       SUPABASE_URL: http://supabase-auth:9999
-      SUPABASE_KEY: super-secret-jwt
+      SUPABASE_KEY: ${JWT_SECRET}
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
 
   frontend:
     build: ./frontend
     depends_on:
       - backend
     environment:
-      VITE_API_URL: http://localhost:3000
+      VITE_API_URL: http://localhost:${BACKEND_PORT:-3000}
     ports:
-      - "4200:80"
+      - "${FRONTEND_PORT:-4200}:80"
 
 volumes:
   supadb-data:
